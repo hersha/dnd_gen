@@ -14,7 +14,7 @@ class App < Sinatra::Base
 
   def stats
 	@stats ||= [0]
-	  @stats = 7.times.map { |r| stat_roll }.sort
+	  @stats = 6.times.map { |r| stat_roll }.sort
 	@stats
   end
 
@@ -35,6 +35,7 @@ class App < Sinatra::Base
 	@race = RACES.sample
 	@gender = GENDER.sample
 	@alignment = [ALIGNMENT_X.sample, ALIGNMENT_Y.sample].compact.join(" ")
+    @sanity = stat_roll
 	stats
 	erb :index
   end
