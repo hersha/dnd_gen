@@ -14,9 +14,7 @@ class App < Sinatra::Base
 
   def stats
 	@stats ||= [0]
-	until @stats.reduce(:+) > 67
-	  @stats = 6.times.map { |r| stat_roll }.sort
-	end
+	  @stats = 7.times.map { |r| stat_roll }.sort
 	@stats
   end
 
