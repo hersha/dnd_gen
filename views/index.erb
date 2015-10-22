@@ -13,21 +13,25 @@
 <body>
 <div class="container">
   <div class="row-fluid">
-	<div class="col-md-4 col-md-offset-4">
-	  <table class="table">
-		<thead>
-		  <tr><th colspan=2>D&D Character Generator</th></tr>
-		</thead>
-		<tbody>
-		  <tr><th>Class</th><td><%= @klass %></td></tr>
-		  <tr><th>Race</th><td><%= @race %></td></tr>
-		  <tr><th>Gender</th><td><%= @gender %></td></tr>
-		  <tr><th>Alignment</th><td><%= @alignment %></td></tr>
-		  <tr><th>Stats</th><td><%= @stats.join(", ") %></td></tr>
-		  <tr><th>Sanity</th><td><%= @sanity %></td></tr>
-		</tbody>
-	  </table>
-	</div>
+    <div class="col-md-4 col-md-offset-4">
+      <table class="table">
+        <thead>
+          <tr><th colspan=2>D&D Character Generator</th></tr>
+        </thead>
+        <tbody>
+          <tr><th>Class</th><td><%= @character.klass %></td></tr>
+          <tr><th>Race</th><td><%= @character.race %></td></tr>
+          <tr><th>Gender</th><td><%= @character.gender %></td></tr>
+          <tr><th>Alignment</th><td><%= @character.alignment %></td></tr>
+          <tr><th>Stats</th><td><%= @character.stats.join(', ') %></td></tr>
+          <tr><th>Sanity</th><td><%= @character.sanity %></td></tr>
+          <tr>
+	    <td><a href="/save/<%= @id %>"><%= @id %></a></td>
+	    <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 </body>

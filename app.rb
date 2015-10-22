@@ -1,42 +1,42 @@
 require 'sinatra/base'
+require 'redis'
+require 'digest'
+require 'ostruct'
+
+require_relative 'lib/character'
 
 class App < Sinatra::Base
-  CLASSES = %w(Barbarian Bard Cleric Druid Fighter Monk Paladin Ranger Rogue Sorcerer Warlock Wizard)
-  RACES = %w(Dwarf Elf Halfling Human Dragonborn Gnome Half-Elf Half-Orc Tiefling Goliath Genasi)
-  GENDER = %w(Male Female)
-  ALIGNMENT_X = ["Lawful", "Chaotic"]
-  ALIGNMENT_Y = %w(Good Neutral Evil)
+  REDIS = Redis.new(url: ENV["REDIS_URL"] || "redis://localhost")
 
-  def stat_roll
-	rolls = 4.times.map { |r| rand(6) + 1}.sort
-	sum = rolls[1..-1].reduce(:+)
+  def cache
+    hash = Digest::MD5.hexdigest(@character.to_json)
+    REDIS.set hash[0..9], @character.to_json
+    REDIS.expire hash[0..9], 60*10
+    hash[0..9]
   end
 
-  def stats
-	@stats ||= [0]
-	  @stats = 6.times.map { |r| stat_roll }.sort
-	@stats
-  end
-
-  def generate
-	@stats = nil
-	@klass = CLASSES.sample
-	@race = RACES.sample
-	@gender = GENDER.sample
-	@alignment = [ALIGNMENT_X.sample, ALIGNMENT_Y.sample].compact.join(" ")
-	stats
+  def load_character
+    json = REDIS.get @id
+    OpenStruct.new JSON.parse(json)
   end
 
   set :public_folder, 'public'
 
   get '/' do
-	@stats = nil
-	@klass = CLASSES.sample
-	@race = RACES.sample
-	@gender = GENDER.sample
-	@alignment = [ALIGNMENT_X.sample, ALIGNMENT_Y.sample].compact.join(" ")
-    @sanity = stat_roll
-	stats
-	erb :index
+    @character = Character.new
+    @id = cache
+    erb :index
   end
+
+  get '/:id' do
+    @id = params[:id]
+    @character = load_character
+    erb :index
+  end
+
+  get '/save/:id' do
+    @id = params[:id]
+    REDIS.persist @id
+    redirect to("/#{@id}")
+  end 
 end
