@@ -21,6 +21,9 @@ class App < Sinatra::Base
   end
 
   set :public_folder, 'public'
+  configure :production do
+    require 'newrelic_rpm'
+  end
 
   get '/' do
     @character = Character.new
